@@ -9,6 +9,11 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import {
+  AuthenticationComponent,
+  registerAuthenticationStrategy,
+} from '@loopback/authentication';
+import {JWTAuthenticationStrategy} from './strategies/jwt-strategy';
 
 export class Loopback4UserAppApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -38,5 +43,8 @@ export class Loopback4UserAppApplication extends BootMixin(
         nested: true,
       },
     };
+
+    this.component(AuthenticationComponent);
+    registerAuthenticationStrategy(this, JWTAuthenticationStrategy);
   }
 }
