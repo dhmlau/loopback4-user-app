@@ -1,0 +1,10 @@
+{
+  "name": "ds",
+  "connector": "postgresql",
+  "url": "",
+  "host": "localhost",
+  "port": 5432,
+  "user": "root",
+  "password": "pass",
+  "database": "userdb"
+}
