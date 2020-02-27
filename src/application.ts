@@ -14,6 +14,8 @@ import {
   registerAuthenticationStrategy,
 } from '@loopback/authentication';
 import {JWTAuthenticationStrategy} from './strategies/jwt-strategy';
+import {TokenServiceBindings, TokenServiceConstants} from './keys';
+import {JWTService} from './services/jwt-services';
 
 export class Loopback4UserAppApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -46,5 +48,19 @@ export class Loopback4UserAppApplication extends BootMixin(
 
     this.component(AuthenticationComponent);
     registerAuthenticationStrategy(this, JWTAuthenticationStrategy);
+
+    // add this to the bottom of the constructor
+    this.setUpBindings();
+  }
+  setUpBindings(): void {
+    this.bind(TokenServiceBindings.TOKEN_SECRET).to(
+      TokenServiceConstants.TOKEN_SECRET_VALUE,
+    );
+
+    this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(
+      TokenServiceConstants.TOKEN_EXPIRES_IN_VALUE,
+    );
+
+    this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
   }
 }
