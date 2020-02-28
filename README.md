@@ -25,10 +25,10 @@ npm start
 
 3. Go to http://localhost:3000/explorer.
 
-i. Create user using `/users/signup`
-ii. Log in using `/users/login`. After you log in, copy the returned token
-iii. Click Authorize at the top of API Explorer, paste the token you got in the previous step.
-iv. You now can call other endpoints.
+- Create user using `/users/signup`
+- Log in using `/users/login`. After you log in, copy the returned token
+- Click Authorize at the top of API Explorer, paste the token you got in the previous step.
+- You now can call other endpoints.
 
 ## Instructions
 
