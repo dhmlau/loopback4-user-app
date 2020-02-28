@@ -63,12 +63,11 @@ export class UserController {
         'application/json': {
           schema: getModelSchemaRef(User, {
             title: 'NewUser',
-            exclude: ['email'],
           }),
         },
       },
     })
-    user: Omit<User, 'email'>,
+    user: User,
   ): Promise<User> {
     return this.userRepository.create(user);
   }
