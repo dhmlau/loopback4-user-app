@@ -14,9 +14,16 @@ import {
   registerAuthenticationStrategy,
 } from '@loopback/authentication';
 import {JWTAuthenticationStrategy} from './strategies/jwt-strategy';
-import {TokenServiceBindings, TokenServiceConstants} from './keys';
+import {
+  TokenServiceBindings,
+  TokenServiceConstants,
+  PasswordHasherBindings,
+  UserServiceBindings,
+} from './keys';
 import {JWTService} from './services/jwt-services';
 import {SECURITY_SCHEME_SPEC} from './utils/security-spec';
+import {BcryptHasher} from './services/hash.password.bcryptjs';
+import {MyUserService} from './services/user-service';
 
 /**
  * Information from package.json
@@ -83,5 +90,10 @@ export class Loopback4UserAppApplication extends BootMixin(
     );
 
     this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
+
+    this.bind(PasswordHasherBindings.ROUNDS).to(10);
+    this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
+
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
   }
 }
