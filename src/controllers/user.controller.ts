@@ -4,6 +4,8 @@ import {
   Filter,
   repository,
   Where,
+  model,
+  property,
 } from '@loopback/repository';
 import {
   post,
@@ -17,7 +19,7 @@ import {
   del,
   requestBody,
 } from '@loopback/rest';
-import {User} from '../models';
+import {User, UserCredentials} from '../models';
 import {UserRepository} from '../repositories';
 import {
   authenticate,
@@ -34,6 +36,15 @@ import {
 import {inject} from '@loopback/core';
 import {PasswordHasher} from '../services/hash.password.bcryptjs';
 import {OPERATION_SECURITY_SPEC} from '../utils/security-spec';
+
+@model()
+export class NewUserRequest extends User {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  password: string;
+}
 
 @authenticate('JWTStrategy') //add this line to protect all endpoints
 export class UserController {
@@ -261,5 +272,61 @@ export class UserController {
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
     return {token};
+  }
+
+  @authenticate.skip()
+  @post('/users/signup', {
+    responses: {
+      '200': {
+        description: 'User model instance',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(User),
+          },
+        },
+      },
+    },
+  })
+  async signUp(
+    @requestBody({
+      content: {
+        'application/json': {
+          // schema: {
+          //   type: 'object',
+          //   properties: {
+          //     email: {
+          //       type: 'string',
+          //       format: 'email',
+          //     },
+          //     firstName: {type: 'string'},
+          //     lastName: {type: 'string'},
+          //     password: {
+          //       type: 'string',
+          //     },
+          //   },
+          // },
+          schema: getModelSchemaRef(NewUserRequest, {
+            title: 'NewUser',
+          }),
+        },
+      },
+    })
+    newUserRequest: NewUserRequest,
+  ): Promise<User> {
+    //create the user first
+    const savedUser = await this.userRepository.create(newUserRequest);
+
+    // create the UserCredential
+    const hashedPwd = await this.passwordHasher.hashPassword(
+      newUserRequest.password,
+    );
+    const userCred = new UserCredentials();
+    userCred.userId = newUserRequest.email;
+    userCred.password = hashedPwd;
+
+    await this.userRepository
+      .userCredentials(newUserRequest.email)
+      .create(userCred);
+    return savedUser;
   }
 }
