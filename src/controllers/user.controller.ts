@@ -38,7 +38,25 @@ import {PasswordHasher} from '../services/hash.password.bcryptjs';
 import {OPERATION_SECURITY_SPEC} from '../utils/security-spec';
 
 @model()
-export class NewUserRequest extends User {
+export class NewUserRequest {
+  @property({
+    type: 'string',
+    id: true,
+    generated: false,
+    required: true,
+  })
+  email: string;
+
+  @property({
+    type: 'string',
+  })
+  firstName?: string;
+
+  @property({
+    type: 'string',
+  })
+  lastName?: string;
+
   @property({
     type: 'string',
     required: true,
@@ -291,22 +309,8 @@ export class UserController {
     @requestBody({
       content: {
         'application/json': {
-          // schema: {
-          //   type: 'object',
-          //   properties: {
-          //     email: {
-          //       type: 'string',
-          //       format: 'email',
-          //     },
-          //     firstName: {type: 'string'},
-          //     lastName: {type: 'string'},
-          //     password: {
-          //       type: 'string',
-          //     },
-          //   },
-          // },
           schema: getModelSchemaRef(NewUserRequest, {
-            title: 'NewUser',
+            title: 'NewUserRequest',
           }),
         },
       },
@@ -314,7 +318,12 @@ export class UserController {
     newUserRequest: NewUserRequest,
   ): Promise<User> {
     //create the user first
-    const savedUser = await this.userRepository.create(newUserRequest);
+    const user = new User();
+    user.email = newUserRequest.email;
+    user.firstName = newUserRequest.firstName;
+    user.lastName = newUserRequest.lastName;
+
+    const savedUser = await this.userRepository.create(user);
 
     // create the UserCredential
     const hashedPwd = await this.passwordHasher.hashPassword(
