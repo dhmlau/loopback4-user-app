@@ -37,7 +37,7 @@ This diagram describes how JWT authentication works:
 
 We are going to:
 
-- create an authentication strategy: [instructions-jwtauth-strategy.md](instructions-auth-infrastructure.md). This will be pretty much the same for any kind of authentication that you're going to use. See `part1` branch.
+- create an authentication strategy: [instructions-jwtauth-strategy.md](instructions-jwtauth-strategy.md). This will be pretty much the same for any kind of authentication that you're going to use. See `part1` branch.
 - create a UserService that authenticates the provided credentials from the user database: [instructions-jwtauth-userservice.md](instructions-jwtauth-userservice.md). See `part2` branch.
 - create a TokenService that extracts token from request header and validates & generates tokens: [instructions-jwtauth-tokenservice.md](instructions-jwtauth-tokenservice.md). See `part3` branch
 - [test the application](instructions-jwtauth-test.md)
